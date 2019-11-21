@@ -4,7 +4,7 @@ namespace app\Admin\controller;
 
 use think\Controller;
 use think\Request;
-use app\Admin\model\Room;
+use app\admin\model\Room;
 
 class house extends Controller
 {
@@ -17,7 +17,10 @@ class house extends Controller
     {
         //
         $data = Room::select();
-        
+        // foreach ($data as $key => $value) {
+        //     var_dump($value);
+        //     # code...
+        // }
         return $this->fetch();
 
     }

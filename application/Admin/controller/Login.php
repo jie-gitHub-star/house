@@ -5,7 +5,7 @@ namespace app\Admin\controller;
 use think\Controller;
 use think\Request;
 // 引入模型类
-use app\Admin\model\Admin;
+use app\admin\model\Admin;
 use think\facade\Session;
 use think\facade\Cookie;
 
