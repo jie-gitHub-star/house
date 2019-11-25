@@ -123,4 +123,30 @@ class Api extends Controller
     {
         //
     }
+    public function cates()
+    {
+        $list = Db::name('roominfo')->field('unit_price,house_type,location')->select();
+        $areas = [];
+        $prices = [];
+        $tps = [];
+        $data = [];
+        /* 泪目 ( Ĭ ^ Ĭ )  下列是分组*/
+        foreach ($list as $key => $value) {
+            if(!in_array($value['unit_price'],$prices)){
+                $prices[] = $value['unit_price'];
+            }
+            if(!in_array($value['house_type'],$tps)){
+                $tps[] = $value['house_type'];
+            }
+            if(!in_array($value['location'],$areas)){
+                $areas[] = $value['location'];
+            }
+        }
+        $data[] = $prices;
+        $data[] = $tps;
+        $data[] = $areas;
+
+        return $this->json_return('success',$data,'00001');
+
+    }
 }

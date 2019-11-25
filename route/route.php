@@ -30,6 +30,7 @@ Route::group('', function(){ /* 检测登录  这里的控制器的访问方法�
 /*  小程序接口 */
 
 Route::resource('v1/houses','Admin/Api');
+Route::get('v1/cates','Admin/Api/cates');
 
 
 return [
