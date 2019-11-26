@@ -171,9 +171,9 @@ class Api extends Controller
             $this->check($value);
             if($value == 'area'){
                 $params[$key] = 'location';
-            }elseif($value== 'prices'){
+            }elseif($value== 'price'){
                 $params[$key] = 'sell_price';
-            }elseif($value== 'tps'){
+            }elseif($value== 'housetp'){
                 $params[$key] = 'house_type';
             }else{
                 $params[$key] = $value;
