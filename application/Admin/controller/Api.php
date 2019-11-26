@@ -180,12 +180,17 @@ class Api extends Controller
             }
             // echo $key.":".$value;
         }
-        // var_dump($params);
-        $data = Db::name('roominfo')->where($params['type'],'like',"%{$params['index']}%")->select();
-       if(!empty($data)){
-            return $this->json_return('success',$data,'00001');
-       }else{
-            return $this->json_return('无数据',$data,'00004');            //查不到数据  0004
-       }
+        //获取数据--------------------------------
+        $datas = Db::name('roominfo')->field('r_id, r_desc,sell_price,unit_price,house_type,acreage,pics,oriented,dispark')->order('r_id', 'desc')->where($params['type'],'like',"%{$params['index']}%")->select();
+          //处理了图片，只要第一张
+        foreach ($datas as $key => $item) {
+           $datas[$key]['pics'] = explode(',',$item['pics'])[0];
+        }
+
+        if(!empty($datas)){
+            return $this->json_return('success',$datas,'00001');
+        }else{
+            return $this->json_return('无数据','','00004');            //查不到数据  0004
+        }
     }
 }
