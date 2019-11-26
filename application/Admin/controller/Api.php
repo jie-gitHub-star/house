@@ -32,7 +32,7 @@ class Api extends Controller
                     }
                     return $data; //闭包函数，return回调数据
                 });
-            return $this->json_return('success',$list,'0000');
+            return $this->json_return('success',$list,'00000');
 
         }
         //  详情页
@@ -41,15 +41,19 @@ class Api extends Controller
             $info = Db::name('roominfo')->where('r_id',$rid)->findOrEmpty();
             $picsx = explode(',',$info['pics']);
             $info["pics"] = $picsx;
-            return $this->json_return('success',$info,'0000');
+            return $this->json_return('success',$info,'00000');
         }
 
       
-        return $this->json_return('请输入指定参数','','0404');
+        return $this->json_return('请输入指定参数','','00404');
         
      
 
     }
+    /*
+    * 放回json数据
+    *
+    */
     public function json_return($message = '',$data = '',$code = 0)
     {
         $return['msg']  = $message;
@@ -57,7 +61,15 @@ class Api extends Controller
         $return['code'] = $code;
         return json_encode($return);
     }
-
+    // 检测sql注入
+    protected function check($sql_str){  
+        $check=preg_match("/select|inert|update|delete|\'|\/\*|\*|\.\.\/|\.\/|UNION|into|load_file|outfile/", $sql_str);   
+        if($check){  
+            $this->json_return("<meta charset='utf8'><title>非法</title><b style='color:red'>请勿尝试SQL注入,IP[".$_SERVER['REMOTE_ADDR']."]已记录！</b>",'','11111');  //sql注入
+        }else{  
+            return strip_tags($sql_str);  
+        }  
+    }  
     /**
      * 显示创建资源表单页.
      *
@@ -152,7 +164,28 @@ class Api extends Controller
 
     //搜索接口
     public function searchs(){
-        $data = request()->param();
-        return $this->json_return('success',$data,'00001');
+        $param =request()->param(); 
+        $params = [];
+        foreach ($param as $key => $value) {
+            //防注入
+            $this->check($value);
+            if($value == 'area'){
+                $params[$key] = 'location';
+            }elseif($value== 'prices'){
+                $params[$key] = 'sell_price';
+            }elseif($value== 'tps'){
+                $params[$key] = 'house_type';
+            }else{
+                $params[$key] = $value;
+            }
+            // echo $key.":".$value;
+        }
+        // var_dump($params);
+        $data = Db::name('roominfo')->where($params['type'],'like',"%{$params['index']}%")->select();
+       if(!empty($data)){
+            return $this->json_return('success',$data,'00001');
+       }else{
+            return $this->json_return('无数据',$data,'00004');            //查不到数据  0004
+       }
     }
 }
