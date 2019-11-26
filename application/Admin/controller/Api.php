@@ -149,4 +149,10 @@ class Api extends Controller
         return $this->json_return('success',$data,'00001');
 
     }
+
+    //搜索接口
+    public function searchs(){
+        $data = request()->param();
+        return $this->json_return('success',$data,'00001');
+    }
 }
