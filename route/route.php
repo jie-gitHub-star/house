@@ -33,6 +33,7 @@ Route::resource('v1/houses','Admin/Api');
 Route::get('v1/cates','Admin/Api/cates');
 
 Route::get('v1/searchs','Admin/Api/searchs');
+Route::get('v1/opendId','Admin/Api/opendId');
 
 
 
