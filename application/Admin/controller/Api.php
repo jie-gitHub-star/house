@@ -5,7 +5,8 @@ namespace app\admin\controller;
 use think\Controller;
 use think\Request;
 use think\Db;
-use app\Admin\model\Admin;
+use app\admin\model\Admin;
+use app\admin\model\wxUsers;
 
 class Api extends Controller
 {
@@ -179,7 +180,7 @@ class Api extends Controller
 
 
     /*
-        用户登录接口 login 
+        用户登录接口 opendId 
     ------------------------------------------
           ------------  param
        @   code    微信调用wxlogin的时候返回的code值；有效期5分钟
@@ -192,15 +193,54 @@ class Api extends Controller
     public function opendId(){//获取用户ID
 
         $code=$_GET["code"];
-
         $appid=$this->appid;
-
         $secret=$this->secret;
+        //检测注入
+        $this->check($code);
+        if(empty($code)){
+            return '参数为空';
+        }
+
+
 
         $c= $this->getCurl("https://api.weixin.qq.com/sns/jscode2session?appid=".$appid."&secret=".$secret."&js_code=".$code."&grant_type=authorization_code");
 
-        return $c;//对JSON格式的字符串进行编码
+        // return $c;//对JSON格式的字符串进行编码
+        $us = json_decode($c,1);
 
+        //检测参数是否过期
+        if(@$us['errcode']==40163)return $this->json_return('code参数过期','','040163');
+        $onlyid = $us['openid'];
+        $session_key = $us['session_key'];
+
+
+        // 将登录状态保存到后台数据库
+        $exist = wxUsers::where('onlyid',$onlyid)->find();
+        var_dump($exist);
+        //如果用户存在则修改sessionid；不存在则添加
+        $users = new wxUsers;
+        if(!$exist){
+            $result = $users->save([
+                'onlyid'  => $onlyid,
+                'sessionkey' =>$session_key,
+                'login_datetime'=>date('Y-m-d H:i:s',time())
+            ]);    
+            return "新增ok";
+        }else{
+            $result = $users->where('onlyid',$onlyid)->update([
+                'sessionkey' =>$session_key,
+                'login_datetime'=>date('Y-m-d H:i:s',time()),
+            ]);
+            return "修改ok";
+        }
+        
+        if(!$result){//如果输入失败
+            $wxdata=json_encode(request()->param());
+            $wxdata .=json_encode($_SERVER['REMOTE_ADDR']);
+            $log = fopen('./log/wxlogin.log','a');
+            fwrite($log,$wxlogin);
+            fclose($log);
+        }
         
     }
 
