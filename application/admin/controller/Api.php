@@ -271,7 +271,7 @@ class Api extends Controller
     /*
             curl函数
     */
-     function getCurl($url, $post = 0, $cookie = 0, $header = 0, $nobaody = 0)
+    public function getCurl($url, $post = 0, $cookie = 0, $header = 0, $nobaody = 0)
     {
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
