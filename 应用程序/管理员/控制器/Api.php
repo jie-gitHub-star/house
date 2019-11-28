@@ -9,8 +9,8 @@ use app\Admin\model\Admin;
 
 class Api extends Controller
 {
-    private $appid='wx581d3e61cb49a511';
-    private $secret='bdc820c9cd42b5330d4599b891ebc79c';
+    private $appid='';
+    private $secret='';
 
     /**
      * 显示资源列表
