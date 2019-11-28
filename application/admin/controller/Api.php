@@ -219,16 +219,19 @@ class Api extends Controller
         //如果用户存在则修改sessionid；不存在则添加
         $users = new wxUsers;
         if(!$exist){
-            $result = $users->save([
+            $id = $users->insertGetId([
                 'onlyid'  => $onlyid,
                 'sessionkey' =>$session_key,
                 'login_datetime'=>date('Y-m-d H:i:s',time())
             ]);
+            return $this->json_return('success',['uid'=>$id],'000001');
         }else{
+            $id = $exist['id'];
             $result = $users->where('onlyid',$onlyid)->update([
                 'sessionkey' =>$session_key,
                 'login_datetime'=>date('Y-m-d H:i:s',time()),
             ]);
+            return $this->json_return('success',['uid'=>$id],'000002');
         }
         
         if(!$result){//如果输入失败
