@@ -1,0 +1,174 @@
+{extend name='Public/base'}
+
+{block name="main"}
+<div class="wrapper">
+	        <section class="panel">
+            <header class="panel-heading">
+                <font color="red">修改</font>楼房信息
+            </header>
+            <div class="panel-body">
+                <form class="form-horizontal adminex-form" method="post" enctype="multipart/form-data" action="/house/{$rinfo.r_id}">
+                  <input type="hidden" name="_method" value="PUT">
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">房子描述</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="r_desc" value="{$rinfo.r_desc}">
+                            <span class="help-block">如：远洋天地四惠，只有契税，落地窗极好</span>
+                        </div>
+                    </div>                               
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">售价</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="sell_price" placeholder="单位：万元" value="{$rinfo.sell_price}">
+                            <span class="help-block">例： 100  </span>
+                        </div>
+                    </div> 
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">朝向</label>
+                        <div class="col-sm-10">
+                           <select class="form-control input m-bot15" name="oriente">
+                                <option value="4" {$rinfo['oriented'] == 4 ? 'selected' : ''; }>北</option>
+                                <option value="1" {$rinfo['oriented'] == 1 ? 'selected' : ''; }>南</option>
+                                <option value="2" {$rinfo['oriented'] == 2 ? 'selected' : ''; }>西</option>
+                                <option value="3" {$rinfo['oriented'] == 3 ? 'selected' : ''; }>东</option>
+                            </select>
+                            <span class="help-block">朝向</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">户型</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="house_type" value="{$rinfo.house_type}">
+                            <span class="help-block">例 ： 三房1厅一卫</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">面积</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="acreage" placeholder="单位： 平方" value="{$rinfo.acreage}">
+                            <span class="help-block">例： 300 </span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">单价</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="unit_price" placeholder="单位：/m^2" value="{$rinfo.unit_price}">
+                            <span class="help-block">10000元 /平方</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">看房时间</label>
+                        <div class="col-sm-10">
+                           <select class="form-control input m-bot15" name="dispark">
+                                <option value="1" {$rinfo['dispark'] == 1 ? 'selected' : ''; }>随时看房</option>
+                                <option value="2" {$rinfo['dispark'] == 2 ? 'selected' : ''; }>电话联系</option>
+                                
+                            </select>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>        
+                    <center>
+                         {foreach $rinfo.pics as $k => $v}
+                                <img src="/{$v}" width="80rem">
+                        {/foreach}
+                    </center>
+                     <div class="form-group">
+                       
+                        <label class="col-sm-2 col-sm-2 control-label">图片轮播列表</label>
+                        <div class="col-sm-10">
+                            <input type="file" class="form-control" name="pics[]" multiple >
+                            <span class="help-block">如：图片规格6:4</span>
+                        </div>
+                    </div>
+                              <!-- 
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">发布时间</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>                   -->
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">楼层</label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" name="floor" placeholder="6层" value="{$rinfo.floor}">
+                            <span class="help-block">例：6</span>
+                        </div>
+                    </div>                  
+                 
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">装修</label>
+                        <div class="col-sm-10">
+                            <select class="form-control input m-bot15" name="spruce">
+                                <option value="1" {$rinfo.spruce == 1 ? "selected" : ''}>简装</option>
+                                <option value="2" {$rinfo.spruce == 2 ? "selected" : ''}>精装</option>
+                                
+                            </select>
+                            <span class="help-block">必选</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">楼型</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="floor_type" value="{$rinfo.floor_type}">
+                            <span class="help-block">楼型,楼类型</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">建筑年代</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="f_time" value="{$rinfo.f_time}">
+                            <span class="help-block">例：90年代</span>
+                        </div>
+                    </div>                
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">商圈</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="trading_area" value="{$rinfo.trading_area}">
+                            <span class="help-block">例： 位置周边</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">小区</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="district" value="{$rinfo.district}">
+                            <span class="help-block">例：朝阳小区</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">位置</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="location" value="{$rinfo.location}">
+                            <span class="help-block">例：</span>
+                        </div>
+                    </div>                  
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">推荐人</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="referrer" value="{$rinfo.referrer}">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 col-sm-2 control-label">房源特色</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="feature" value="{$rinfo.feature}">
+                            <span class="help-block">几列</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" type="submit"> 提交 </button>
+                </form>
+            </div>
+        </section>
+</div>
+<script type="text/javascript">
+    $("input[type='number']").change(function(){
+        $(this).val()<1 ? $(this).val(1) : '';
+    });
+</script>
+
+{/block}
+
+{block name="main_footer"}
+
+{/block}
