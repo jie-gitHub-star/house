@@ -10,8 +10,8 @@ use app\admin\model\wxUsers;
 
 class Api extends Controller
 {
-    private $appid='wx581d3e61cb49a511';
-    private $secret='bdc820c9cd42b5330d4599b891ebc79c';
+    private $appid='';
+    private $secret='';
 
     /**
      * 显示资源列表
@@ -73,6 +73,27 @@ class Api extends Controller
     public function save(Request $request)
     {
         //
+        return $_SERVER['REMOTE_ADDR'];
+        die;
+        $users = new wxUsers;
+        $param = $request->param();
+        switch ($param['type']) {
+            case 'userinfo':
+            $data = $param['userinfo'];
+            // return json_encode($data);
+            // 添加用户详情
+            $uid = $param['uid'];
+            $result = $users->where('id','=',$uid)->update($data);
+            if($result){
+                return json_return('success','','0000012');
+            }else{
+                return json_return('fail','','0000013');
+            }
+                break;
+            default:
+                echo "other";
+                break;
+        }
     }
 
     /**
