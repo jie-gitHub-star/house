@@ -73,14 +73,18 @@ class Api extends Controller
     public function save(Request $request)
     {
         //
-        $users = new wxUsers;
         $param = $request->param();
+        // var_dump($param);collected
+        $users = new wxUsers;
+        $uid = $param['uid'];
+        if(empty($uid)){return json_return('uid为空','','002004');}
+        $param = $request->param();
+
         switch ($param['type']) {
             case 'userinfo':
             $data = $param['userinfo'];
             // return json_encode($data);
             // 添加用户详情
-            $uid = $param['uid'];
             $result = $users->where('id','=',$uid)->update($data);
             if($result){
                 return $this->json_return('success','','0000012');
@@ -88,6 +92,31 @@ class Api extends Controller
                 return $this->json_return('fail','','0000013');
             }
                 break;
+            case 'collected':
+                $rid = $param['rid'];
+                $this->check($rid);
+                #先查询数据是否存在，如果存在则追加，没有就插入数
+                $isnow = Db::name('collected')->where('uid',$uid)->find();
+                if($isnow){
+                    // 检查是否已存在（去重）
+                    $colls = rtrim($isnow['collected'],',');
+                    $colls = explode(',',$colls);
+                    $isexist = in_array($rid,$colls);
+                    if($isexist){//如果已经存在，返回已关注
+                        return $this->json_return('已关注','','0000212');
+                    }  
+                    $sql = "UPDATE wx_collected SET `collected`=CONCAT(collected,'$rid".','."') WHERE `uid`=$uid";
+                    $res = Db::name('collected')->query($sql);
+                    return $this->json_return('关注了',$rid,'000001');
+                }else{
+                    $rid.=",";
+                    $res = Db::name('collected')->insert(['uid'=>$uid,'collected'=>$rid]);
+                }
+                if($res){
+                    $this->json_return('添加成功');
+                }
+
+            break;
             default:
                 return $this->json_return('other','','000101');
                 break;
@@ -271,7 +300,7 @@ class Api extends Controller
     * 放回json数据
     *
     */
-    public function json_return($message = '',$data = '',$code = 0)
+    protected function json_return($message = '',$data = '',$code = 0)
     {
         $return['msg']  = $message;
         $return['data'] = $data;
@@ -322,5 +351,11 @@ class Api extends Controller
             $ret = curl_exec($ch);
             curl_close($ch);
             return $ret;
+    }
+        // 日志写入方法
+    public function wlog($data='',$file='./log/wxlogin.log'){
+        $log = fopen($file,'a');
+        fwrite($log,$data);
+        fclose($log);
     }
 }
