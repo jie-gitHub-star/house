@@ -73,8 +73,6 @@ class Api extends Controller
     public function save(Request $request)
     {
         //
-        return $_SERVER['REMOTE_ADDR'];
-        die;
         $users = new wxUsers;
         $param = $request->param();
         switch ($param['type']) {
@@ -85,15 +83,16 @@ class Api extends Controller
             $uid = $param['uid'];
             $result = $users->where('id','=',$uid)->update($data);
             if($result){
-                return json_return('success','','0000012');
+                return $this->json_return('success','','0000012');
             }else{
-                return json_return('fail','','0000013');
+                return $this->json_return('fail','','0000013');
             }
                 break;
             default:
-                echo "other";
+                return $this->json_return('other','','000101');
                 break;
         }
+       
     }
 
     /**
