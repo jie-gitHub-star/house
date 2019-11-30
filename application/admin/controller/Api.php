@@ -7,6 +7,7 @@ use think\Request;
 use think\Db;
 use app\admin\model\Admin;
 use app\admin\model\wxUsers;
+use app\admin\model\Room;
 
 class Api extends Controller
 {
@@ -36,8 +37,8 @@ class Api extends Controller
                     }
                     return $data; //闭包函数，return回调数据
                 });
-            return $this->json_return('success',$list,'00000');
 
+            return $this->returns($list);
         }
         //  详情页
         if(request()->param('info')){
@@ -81,6 +82,7 @@ class Api extends Controller
         $param = $request->param();
 
         switch ($param['type']) {
+            /*---------用户关注接口--------------------------*/
             case 'userinfo':
             $data = $param['userinfo'];
             // return json_encode($data);
@@ -92,6 +94,8 @@ class Api extends Controller
                 return $this->json_return('fail','','0000013');
             }
                 break;
+
+            /*---------收藏关注接口--------------------------*/
             case 'collected':
                 $rid = $param['rid'];
                 $this->check($rid);
@@ -219,12 +223,8 @@ class Api extends Controller
         foreach ($datas as $key => $item) {
            $datas[$key]['pics'] = explode(',',$item['pics'])[0];
         }
-
-        if(!empty($datas)){
-            return $this->json_return('success',$datas,'00001');
-        }else{
-            return $this->json_return('无数据','','00004');            //查不到数据  0004
-        }
+        return $this->returns($datas);
+        
     }
 
 
@@ -294,8 +294,26 @@ class Api extends Controller
     }
 
 
+    // /-------------描述de关键字搜索功能------------------/
+    public function descsearch(){
+        $param = request()->param();
+        $gjz = $param['gjz'];
+        $this->check($gjz);
+        $datas =Room::field('r_id, r_desc,sell_price,unit_price,house_type,acreage,pics,oriented,dispark')->order('r_id', 'desc')->where('r_desc','like',"%{$gjz}%")->select();
+        return $this->returns($datas);
+
+    }
 
 /*---------辅助函数---------------------------------------*/
+    
+    //有数据返回成功，没有返回失败
+    public function returns($data){
+        if(!empty($data)){
+            return $this->json_return('success',$data,'000001');
+        }else{
+            return $this->json_return('fail','','0004040');
+        }
+    }
     /*
     * 放回json数据
     *
