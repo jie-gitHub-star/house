@@ -300,6 +300,10 @@ class Api extends Controller
         $gjz = $param['gjz'];
         $this->check($gjz);
         $datas =Room::field('r_id, r_desc,sell_price,unit_price,house_type,acreage,pics,oriented,dispark')->order('r_id', 'desc')->where('r_desc','like',"%{$gjz}%")->select();
+        if(!empty($datas)){
+            echo '空';
+        }
+        var_dump($datas);
         return $this->returns($datas);
 
     }
@@ -308,6 +312,7 @@ class Api extends Controller
     
     //有数据返回成功，没有返回失败
     public function returns($data){
+
         if(!empty($data)){
             return $this->json_return('success',$data,'000001');
         }else{
