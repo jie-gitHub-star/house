@@ -11,8 +11,8 @@ use app\admin\model\Room;
 
 class Api extends Controller
 {
-    private $appid='';
-    private $secret='';
+    private $appid='wx581d3e61cb49a511';
+    private $secret='bdc820c9cd42b5330d4599b891ebc79c';
 
     /**
      * 显示资源列表
@@ -109,7 +109,7 @@ class Api extends Controller
                     if($isexist){//如果已经存在，返回已关注
                         return $this->json_return('已关注','','0000212');
                     }  
-                    $sql = "UPDATE wx_collected SET `collected`=CONCAT(collected,'$rid".','."') WHERE `uid`=$uid";
+                    $sql = "UPDATE wxp_collected SET `collected`=CONCAT(collected,'$rid".','."') WHERE `uid`=$uid";
                     $res = Db::name('collected')->query($sql);
                     return $this->json_return('关注了',$rid,'000001');
                 }else{
