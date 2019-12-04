@@ -172,6 +172,12 @@ class Api extends Controller
     {
         //
     }
+    /*
+    *   分类搜索页面，获取选项卡的各个选择
+    * @ 参数无
+    *
+    * @ return  三个分类数组
+    */
     public function cates()
     {
         $list = Db::name('roominfo')->field('unit_price,house_type,location')->select();
@@ -200,6 +206,11 @@ class Api extends Controller
     }
 
     //搜索接口
+    /*
+    * @ param 接收的选项卡参数
+    *
+    * @ return 搜索到的数据列表
+    */
     public function searchs(){
         $param =request()->param(); 
         $params = [];
@@ -249,7 +260,6 @@ class Api extends Controller
         if(empty($code)){
             return '参数为空';
         }
-
 
 
         $c= $this->getCurl("https://api.weixin.qq.com/sns/jscode2session?appid=".$appid."&secret=".$secret."&js_code=".$code."&grant_type=authorization_code");
