@@ -303,6 +303,14 @@ class Api extends Controller
         
     }
 
+    public function getcollected(){
+        $params = request()->param();
+        $uid = $params['uid'];
+        if(empty($uid)) return $this->json_return('缺少参数','','err');
+        $data = Db::name('collected')->where('uid',$uid)->find();
+        
+
+    }
 
     // /-------------描述de关键字搜索功能------------------/
     public function descsearch(){
@@ -317,6 +325,9 @@ class Api extends Controller
         return $this->returns($datas);
 
     }
+
+
+
 
 /*---------辅助函数---------------------------------------*/
     
