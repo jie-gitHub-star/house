@@ -75,10 +75,14 @@ class Api extends Controller
     {
         //
         $param = $request->param();
-        // var_dump($param);collected
+        // var_dump($param);
+
+        // collected
         $users = new wxUsers;
         $uid = $param['uid'];
-        if(empty($uid)){return json_return('uid为空','','002004');}
+        // var_dump($uid);
+        // die;
+        if(empty($uid)){return $this->json_return('uid为空','','002004');}
         $param = $request->param();
 
         switch ($param['type']) {
@@ -91,12 +95,16 @@ class Api extends Controller
             if($result){
                 return $this->json_return('success','','0000012');
             }else{
-                return $this->json_return('fail','','0000013');
+                return $this->json_return('noEdit','','0000013');
             }
                 break;
 
             /*---------收藏关注接口--------------------------*/
             case 'collected':
+            /*
+            *  @ uid
+            *  @ rid
+            */
                 $rid = $param['rid'];
                 $this->check($rid);
                 #先查询数据是否存在，如果存在则追加，没有就插入数
@@ -172,12 +180,6 @@ class Api extends Controller
     {
         //
     }
-    /*
-    *   分类搜索页面，获取选项卡的各个选择
-    * @ 参数无
-    *
-    * @ return  三个分类数组
-    */
     public function cates()
     {
         $list = Db::name('roominfo')->field('unit_price,house_type,location')->select();
@@ -206,11 +208,6 @@ class Api extends Controller
     }
 
     //搜索接口
-    /*
-    * @ param 接收的选项卡参数
-    *
-    * @ return 搜索到的数据列表
-    */
     public function searchs(){
         $param =request()->param(); 
         $params = [];
@@ -262,6 +259,7 @@ class Api extends Controller
         }
 
 
+
         $c= $this->getCurl("https://api.weixin.qq.com/sns/jscode2session?appid=".$appid."&secret=".$secret."&js_code=".$code."&grant_type=authorization_code");
 
         // return $c;//对JSON格式的字符串进行编码
@@ -303,14 +301,6 @@ class Api extends Controller
         
     }
 
-    public function getcollected(){
-        $params = request()->param();
-        $uid = $params['uid'];
-        if(empty($uid)) return $this->json_return('缺少参数','','err');
-        $data = Db::name('collected')->where('uid',$uid)->find();
-        
-
-    }
 
     // /-------------描述de关键字搜索功能------------------/
     public function descsearch(){
@@ -318,22 +308,23 @@ class Api extends Controller
         $gjz = $param['gjz'];
         $this->check($gjz);
         $datas =Room::field('r_id, r_desc,sell_price,unit_price,house_type,acreage,pics,oriented,dispark')->order('r_id', 'desc')->where('r_desc','like',"%{$gjz}%")->select();
-        if(!empty($datas)){
-            echo '空';
-        }
-        var_dump($datas);
+        $datas = $this->fpic($datas);
         return $this->returns($datas);
 
     }
 
-
-
-
 /*---------辅助函数---------------------------------------*/
+
+    //获取第一张图片
+    protected function fpic($datas){
+         foreach ($datas as $key => $item) {
+           $datas[$key]['pics'] = explode(',',$item['pics'])[0];
+        }
+        return $datas;
+    }
     
     //有数据返回成功，没有返回失败
     public function returns($data){
-
         if(!empty($data)){
             return $this->json_return('success',$data,'000001');
         }else{
