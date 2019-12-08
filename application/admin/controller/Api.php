@@ -313,7 +313,52 @@ class Api extends Controller
 
     }
 
+    //获取用户关注列表
+    public function getcoll(){
+        $params =  request()->param();
+        //检测是否有参数为空
+        // $this->isempty($params);
+        $uid = @$params['uid'];
+        if(isset($uid) && !empty($uid)){
+            $collects = Db::name('collected')->where('uid',$uid)->field('collected')->find();
+            $collects = $collects['collected'];
+            //去掉最右边的逗号                                                        
+            $collects = rtrim($collects,',');                                       
+            //以逗号为符号分割字符串
+            $colls = explode(',',$collects);
+            $colls = (count($colls) == 1 ?  $colls[0] : $colls );
+            $datas = Db::name('roominfo')->field('r_id, r_desc,sell_price,unit_price,house_type,acreage,pics,oriented,dispark')->where(['r_id'=>$colls])->select();
+            #获取第一张图片
+            $datas = $this->fpic($datas);
+            return $this->returns($datas);
+             /*
+                      w为什么要弄这些处理呢，查询到的数据是有"数字+逗号" 组成的字符串，这些字符串可能是多个，可能是一个
+                    1，如果是一个的情况，则用where条件即可，where('r_id',$rids)
+                    2，如果是多个字符串，那么查询条件就应该用in  tp5.1 并没有特地写个in函数，而是直接在where里做了加工：
+                    如果数组的值为数组类型，那么查询条件变为in,写法是where(['r_id'=>$rids]);
+                      #rids 是一个索引数组 ，索引数组，索引数组
+             */
+        }else{
+            // 参数非法
+            return $this->json_return('参数非法','','err');
+        }
+
+
+    }
+
+
 /*---------辅助函数---------------------------------------*/
+
+    // 判断都是否不为空
+    
+    // protected function isempty($data){
+    //     foreach ($data as $key => $value) {
+    //         if(empty($value)){
+    //             return $this->json_return($key.'为空','','err');
+    //         }
+    //     }
+        
+    // }
 
     //获取第一张图片
     protected function fpic($datas){
