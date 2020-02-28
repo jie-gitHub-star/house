@@ -8,8 +8,8 @@ use think\Db;
 use app\admin\model\Admin;
 use app\admin\model\wxUsers;
 use app\admin\model\Room;
-
-class Api extends Controller
+use app\common\controller\CommonController;
+class Api extends CommonController
 {
     private $appid='wx581d3e61cb49a511';
     private $secret='bdc820c9cd42b5330d4599b891ebc79c';
@@ -44,6 +44,9 @@ class Api extends Controller
         if(request()->param('info')){
             $rid = request()->param('rid');
             $info = Db::name('roominfo')->where('r_id',$rid)->findOrEmpty();
+            if(!$info){
+                return $this->json_return('param invalid',$info,'000-1');
+            }
             $picsx = explode(',',$info['pics']);
             $info["pics"] = $picsx;
             return $this->json_return('success',$info,'00000');
