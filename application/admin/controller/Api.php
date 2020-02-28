@@ -380,7 +380,7 @@ class Api extends Controller
     * 放回json数据
     *
     */
-    protected function json_return($message = '',$data = '',$code = 0)
+    public function json_return($message = '',$data = '',$code = 0)
     {
         $return['msg']  = $message;
         $return['data'] = $data;
@@ -388,7 +388,7 @@ class Api extends Controller
         return json_encode($return);
     }
     // 检测sql注入
-    protected function check($sql_str){  
+    public function check($sql_str){  
         $check=preg_match("/select|inert|update|delete|\'|\/\*|\*|\.\.\/|\.\/|UNION|into|load_file|outfile/", $sql_str);   
         if($check){  
             return $this->json_return("<meta charset='utf8'><title>非法</title><b style='color:red'>请勿尝试SQL注入,IP[".$_SERVER['REMOTE_ADDR']."]已记录！</b>",'','11111');  //sql注入
