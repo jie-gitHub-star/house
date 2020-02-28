@@ -35,7 +35,7 @@ Route::get('v1/cates','Admin/Api/cates');
 Route::get('v1/searchs','Admin/Api/searchs');
 Route::get('v1/openId','Admin/Api/opendId');
 Route::get('v1/descsearch','Admin/Api/descsearch');
-Route::get('v1/getcoll','Admin/Api/getcoll');
+Route::get('v1/getcolls','Admin/Api/getcoll');
 
 
 
